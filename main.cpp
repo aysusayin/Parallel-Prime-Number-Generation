@@ -26,6 +26,30 @@ static int chunkSize;
 static int M;
 static int executionTime;
 
+
+int primeNumberGenerator(int* primeNumbers, int t){
+    int prime[t][M];
+    int j ;
+    int k ;
+    int n ;
+    int quo,rem ;
+    prime[t][0] = 2;
+    n=3;
+    for(j=0; j < M; j++){
+        prime[t][j] = n;
+        for(;rem > 0; n=n+2){
+            for(k=1; quo > prime[t][k]; k++){
+                quo = n / prime[t][k];
+                rem = n % prime[t][k];  
+            }
+            
+        }
+
+    }
+    return primeNumbers[t];
+}
+
+
 int main(int argc, char *argv[]) { 
     if(argc < 4){
         cout << "All arguments are required";
