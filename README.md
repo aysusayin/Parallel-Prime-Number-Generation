@@ -1,2 +1,2 @@
 # Parallel-Processing
-CMPE 460: Parallel Processing HW 1
+CMPE 478: Parallel Processing HW 1
