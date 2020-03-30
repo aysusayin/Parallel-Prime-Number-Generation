@@ -27,28 +27,34 @@ static int M;
 static int executionTime;
 
 
-int primeNumberGenerator(int* primeNumbers, int t){ // t is the no of threads
-    int prime[t][M];
-    int j = 1;
+int primeNumberGenerator(int prime[N]){ // t is the no of threads
+    
+    int j ;
     int k ;
-    int n = 3;
-    int quo;
-    int rem;
-    prime[t][0] = 2;
-    for(; j < M; j++){
-        prime[t][j] = n;
-        do{
-            n = n + 2;
-            k=1;
-            do{
-                quo = n / prime[t][k];
-                rem = n % prime[t][k];
-                if(rem == 0) break;
-                if(quo <= prime[t][k]) break;
+    int n ;
+    int quo,rem ;
+    prime[0] = 2 ;
+    n = 3 ;
+    j = 1 ;
+    prime[0] = 2;
+    for(; j < prime.length(); j++){// P2
+        prime[j] = n;
+        bool check = True;
+        for(; check; n+=2){//p4
+            k = 1;
+            for (; True; ){//p6
+                quo = n / prime[k] ;
+                rem = n % prime[k] ;
+                if (rem == 0) {
+                    break
+                } ;
+                if (quo <= prime[k]){
+                    check = False;
+                    break
+                }
                 k++;
-            }while(true);
-            if(quo <= prime[t][k]) break;
-        }while(true);
+            }
+        } 
     }
     prime[t][j] = n;
     
