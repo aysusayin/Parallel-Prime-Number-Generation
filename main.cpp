@@ -27,30 +27,40 @@ static int M;
 static int executionTime;
 
 
-int primeNumberGenerator(int* primeNumbers, int t){
+int primeNumberGenerator(int* primeNumbers, int t){ // t is the no of threads
     int prime[t][M];
-    int j ;
+    int j = 1;
     int k ;
-    int n ;
-    int quo,rem ;
+    int n = 3;
+    int quo;
+    int rem;
     prime[t][0] = 2;
-    n=3;
-    for(j=0; j < M; j++){
+    for(; j < M; j++){
         prime[t][j] = n;
-        for(;rem > 0; n=n+2){
-            for(k=1; quo > prime[t][k]; k++){
+        do{
+            n = n + 2;
+            k=1;
+            do{
                 quo = n / prime[t][k];
-                rem = n % prime[t][k];  
-            }
-            
-        }
-
+                rem = n % prime[t][k];
+                if(rem == 0) break;
+                if(quo <= prime[t][k]) break;
+                k++;
+            }while(true);
+            if(quo <= prime[t][k]) break;
+        }while(true);
     }
-    return primeNumbers[t];
+    prime[t][j] = n;
+    
+    for(j=0; j < M; j++){ printf("%d\n", prime[t][j]);}
 }
 
 
-int main(int argc, char *argv[]) { 
+int main(int argc, char *argv[]) {
+    int* p=0;
+    M = 20;
+    primeNumberGenerator(p, 1);
+    return 0;
     if(argc < 4){
         cout << "All arguments are required";
         return 0;
