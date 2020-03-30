@@ -27,40 +27,38 @@ static int M;
 static int executionTime;
 
 
-int primeNumberGenerator(int* primeNumbers, int t){ // t is the no of threads
-    int prime[t][M];
-    int j = 1;
+int primeNumberGenerator(vector<int> prime, int t, int M){
+    int j ;
     int k ;
-    int n = 3;
-    int quo;
-    int rem;
-    prime[t][0] = 2;
-    for(; j < M; j++){
-        prime[t][j] = n;
-        do{
-            n = n + 2;
-            k=1;
-            do{
-                quo = n / prime[t][k];
-                rem = n % prime[t][k];
-                if(rem == 0) break;
-                if(quo <= prime[t][k]) break;
+    int n ;
+    int quo,rem ;
+    prime.push_back(2);
+    n = 3 ;
+    for(j = 1; n < M; j++){// P2
+        prime.push_back(n);
+        bool check = true;
+        while(check){//p4
+            n+=2;
+            k = 1;
+            while(true){//p6
+                quo = n / prime.at(k) ;
+                rem = n % prime.at(k) ;
+                if (rem == 0) {
+                    break;
+                }
+                if (quo <= prime.at(k)){
+                    check = false;
+                    break;
+                }
                 k++;
-            }while(true);
-            if(quo <= prime[t][k]) break;
-        }while(true);
+            }
+        } 
     }
-    prime[t][j] = n;
     
-    for(j=0; j < M; j++){ printf("%d\n", prime[t][j]);}
+    for(j=0; j < prime.size(); j++){ printf("%d\n", prime.at(j));}
 }
 
-
-int main(int argc, char *argv[]) {
-    int* p=0;
-    M = 20;
-    primeNumberGenerator(p, 1);
-    return 0;
+int main(int argc, char *argv[]) { 
     if(argc < 4){
         cout << "All arguments are required";
         return 0;
@@ -69,7 +67,8 @@ int main(int argc, char *argv[]) {
     transform(schedulingMethod.begin(), schedulingMethod.end(), schedulingMethod.begin(), ::toupper);
     chunkSize = stoi(argv[2]);
     M = stoi(argv[3]);
-
+    vector<int> prime;
+    primeNumberGenerator(prime, 1, M);
     if(schedulingMethod.compare("STATIC")){
         cout << schedulingMethod;
     }
