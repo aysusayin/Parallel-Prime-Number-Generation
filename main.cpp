@@ -11,18 +11,6 @@
 
 using namespace std;
 
-/*
-$ sudo g++ hello.cpp (or)
-
-$ sudo g++ -o hello hello.cpp
-
-$ ./a.out (If you compiled using first command)
-
-Or
-
-$ ./hello (If you compiled using second command)
-*/
-
 static string schedulingMethod;
 static int chunkSize;
 static int M;
@@ -36,6 +24,8 @@ int primeNumberGenerator(vector<int> &primesIn, vector<int> &primesOut, int star
         realStart = 1;
     } else if (start % 2 == 0) {
         realStart -= 1;
+    } else {
+        realStart -= 2;
     }
     int j;
     int k;
@@ -63,8 +53,6 @@ int primeNumberGenerator(vector<int> &primesIn, vector<int> &primesOut, int star
         }
 
     }
-
-    for (j = 0; j < primesOut.size(); j++) { printf("%d\n", primesOut.at(j)); }
 }
 
 // Calculates prime numbers up to end.
@@ -102,66 +90,20 @@ int main(int argc, char *argv[]) {
 #pragma omp parallel private(tid) shared(threads_prime, M, squareRootM, prime, chunkSize)
     {
         tid = omp_get_thread_num();
-        printf("Hello World from thread = %d\n", tid);
+        vector<int> primesOut;
 
-        if (tid == 0) {
-            int num_threads = omp_get_num_threads();
-            for (int i = 0; i < num_threads; i++) {
-                vector<int> tmp;
-                threads_prime.push_back(tmp);
-            }
+#pragma omp for schedule(static, chunkSize)
+        for (int i = squareRootM + 1; i <= M; i += 2) {
+            primeNumberGenerator(prime, primesOut, i, i + 1);
         }
-
-#pragma omp barrier
-
-        vector<int> primesOut = threads_prime.at(tid);
-        int end = M;
-        int realStart = squareRootM;
-        if (squareRootM <= 2) {
-            primesOut.push_back(2);
-            realStart = 1;
-        } else if (squareRootM % 2 == 0) {
-            realStart -= 1;
-        }
-        int k;
-        int n = realStart;
-
-#pragma omp for private(primesOut, k) schedule(static, chunkSize)
-        for (int j = 1; j <= end; j++) {// P2
-            if (n <= end) {
-                if (j != 1) primesOut.push_back(n);
-                printf("pushed %d from %d\n", n, tid);
-                bool check = true;
-                while (check) {//p4
-                    n += 2;
-                    for (k = 1; k < prime.size(); k++) {//p6
-                        int quo = n / prime.at(k);
-                        int rem = n % prime.at(k);
-                        if (rem == 0) {
-                            break;
-                        }
-                        if (quo <= prime.at(k)) {
-                            check = false;
-                            break;
-                        }
-                    }
-                    if (k >= prime.size()) check = false;
-                }
-
-            }
-        }
+#pragma omp critical
+        threads_prime.push_back(primesOut);
 
     }
-    cout << "fin\n";
-    for (int i = 0; i < threads_prime.size(); i++) {
-        vector<int> tmp = threads_prime.at(i);
-        int tmp_size = tmp.size();
-        for (int z = 0; z < tmp_size; z++) {
-            primeOut.push_back(tmp.at(z));
-            cout << "" << tmp.at(z) << "\n";
-        }
+    for(int i=0; i<threads_prime.size();i++){
+        vector<int> tmp=threads_prime.at(i);
+        for(int j=0; j<tmp.size();j++)
+            printf("%d\n", tmp.at(j));
     }
-
-
     return 0;
 }
