@@ -1,11 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <fstream>
-#include <iterator>
-#include <list>
-#include <sstream>
 #include <algorithm>
-#include <queue>
 #include <cmath>
 #include <omp.h>
 
@@ -15,6 +10,7 @@ static string schedulingMethod;
 static int chunkSize;
 static int M;
 static int executionTime;
+static int t;
 
 // Calculates primes between [start, end]
 int primeNumberGenerator(vector<int> &primesIn, vector<int> &primesOut, int start, int end) {
@@ -61,49 +57,57 @@ int primeNumberGenerator(vector<int> &primes, int end) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 4) {
-        cout << "All arguments are required";
+    if (argc < 5) {
+        cout << "All arguments are required: Scheduling method, chunk size, M, number of threads.";
         return 0;
     }
     schedulingMethod = argv[1];
     transform(schedulingMethod.begin(), schedulingMethod.end(), schedulingMethod.begin(), ::toupper);
     chunkSize = stoi(argv[2]);
     M = stoi(argv[3]);
+    t = stoi(argv[4]);
+
     vector<int> prime;
     vector<int> primeOut;
     int squareRootM = (int) sqrt(M);
     primeNumberGenerator(prime, squareRootM);
 
-
+    omp_set_num_threads(t);
     if (schedulingMethod.compare("STATIC")) {
-        cout << schedulingMethod;
+        omp_set_schedule(omp_sched_static, chunkSize);
     } else if (schedulingMethod.compare("DYNAMIC")) {
-        cout << schedulingMethod;
-    } else if (schedulingMethod.compare("GUIDED_A")) {
-        cout << schedulingMethod;
-    } else if (schedulingMethod.compare("GUIDED_B")) {
-        cout << schedulingMethod;
+        omp_set_schedule(omp_sched_dynamic, chunkSize);
+    } else if (schedulingMethod.compare("GUIDED")) {
+        omp_set_schedule(omp_sched_guided, chunkSize);
+    } else if (schedulingMethod.compare("AUTO")) {
+        omp_set_schedule(omp_sched_auto, chunkSize);
     }
 
     int tid;
     vector<vector<int>> threads_prime;
-#pragma omp parallel private(tid) shared(threads_prime, M, squareRootM, prime, chunkSize)
+    #pragma omp parallel private(tid) shared(threads_prime, M, squareRootM, prime)
     {
         tid = omp_get_thread_num();
+        printf("tid %d\n", tid);
         vector<int> primesOut;
 
-#pragma omp for schedule(static, chunkSize)
+        #pragma omp for schedule(runtime) nowait
         for (int i = squareRootM + 1; i <= M; i += 2) {
             primeNumberGenerator(prime, primesOut, i, i + 1);
         }
-#pragma omp critical
+        #pragma omp critical
         threads_prime.push_back(primesOut);
+    }
 
+    for (auto tmp : threads_prime) {
+        for (int j : tmp) {
+            prime.push_back(j);
+        }
     }
-    for(int i=0; i<threads_prime.size();i++){
-        vector<int> tmp=threads_prime.at(i);
-        for(int j=0; j<tmp.size();j++)
-            printf("%d\n", tmp.at(j));
-    }
+    sort(prime.begin(), prime.end());
+
+    for (int j : prime)
+        printf("%d\n", j);
+
     return 0;
 }
