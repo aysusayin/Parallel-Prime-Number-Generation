@@ -12,7 +12,7 @@ static int M;
 static int executionTime;
 static int t;
 
-// Calculates primes between [start, end]
+// Calculates prime numbers in range [start, end].
 int primeNumberGenerator(vector<int> &primesIn, vector<int> &primesOut, int start, int end) {
     int realStart = start;
     if (start <= 2) {
@@ -61,18 +61,32 @@ int main(int argc, char *argv[]) {
         cout << "All arguments are required: Scheduling method, chunk size, M, number of threads.";
         return 0;
     }
+    time_t begin_time;
+    time(&begin_time);
+
     schedulingMethod = argv[1];
     transform(schedulingMethod.begin(), schedulingMethod.end(), schedulingMethod.begin(), ::toupper);
     chunkSize = stoi(argv[2]);
     M = stoi(argv[3]);
     t = stoi(argv[4]);
+    static bool print = false;
+    try {
+        string option = argv[5];
+        if (option.compare( "--print") == 0) print = true;
+    } catch (exception e) {
+    }
+
 
     vector<int> prime;
-    vector<int> primeOut;
     int squareRootM = (int) sqrt(M);
     primeNumberGenerator(prime, squareRootM);
 
     omp_set_num_threads(t);
+    /*
+     * For the schedule kinds static, dynamic, and guided the chunk_size is set to the value of the second argument,
+     * or to the default chunk_size if the value of the second argument is less than 1; for the schedule kind auto the
+     * second argument has no meaning; for implementation specific schedule kinds, the values and associated meanings
+     * of the second argument are implementation defined. */
     if (schedulingMethod.compare("STATIC")) {
         omp_set_schedule(omp_sched_static, chunkSize);
     } else if (schedulingMethod.compare("DYNAMIC")) {
@@ -83,12 +97,9 @@ int main(int argc, char *argv[]) {
         omp_set_schedule(omp_sched_auto, chunkSize);
     }
 
-    int tid;
     vector<vector<int>> threads_prime;
-    #pragma omp parallel private(tid) shared(threads_prime, M, squareRootM, prime)
+    #pragma omp parallel shared(threads_prime, M, squareRootM, prime)
     {
-        tid = omp_get_thread_num();
-        printf("tid %d\n", tid);
         vector<int> primesOut;
 
         #pragma omp for schedule(runtime) nowait
@@ -104,10 +115,18 @@ int main(int argc, char *argv[]) {
             prime.push_back(j);
         }
     }
+
+    time_t end_time;
+    time(&end_time);
+    executionTime = end_time - begin_time;
+
     sort(prime.begin(), prime.end());
 
-    for (int j : prime)
-        printf("%d\n", j);
+    if (print) {
+        for (int j : prime)
+            printf("%d\n", j);
+    }
 
+    printf("Execution time: %d\n", executionTime);
     return 0;
 }
