@@ -2,7 +2,7 @@
 ## CMPE 478: Parallel Processing HW 1
 ### Generating Prime Numbers
 
-####Prime Number Generator
+#### Prime Number Generator
 To generate prime numbers first make the project by running following commands: 
 
 ```
@@ -21,7 +21,7 @@ but please put there a number so that program runs without any errors.
 
 If you want to see the prime numbers that are generated, put --print option in the end. 
 
-####Performance Analysis
+#### Performance Analysis
 To see the analysis, run `./primeAnalysis.sh`. You can run this file without making the project since it makes it.
  
  NOTE: "primeAnalysis.sh" program generates a file named "PrimeNumberGeneratorAnalysis.csv". So
