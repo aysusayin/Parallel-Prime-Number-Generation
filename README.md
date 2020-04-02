@@ -9,6 +9,12 @@ To generate prime numbers first make the project by running following commands:
 cmake ../Parallel-Processing/
 make
 ```
+or 
+
+```
+g++ --openmp -o prime main.cpp
+```
+
 
 Then run the program like this:
 
