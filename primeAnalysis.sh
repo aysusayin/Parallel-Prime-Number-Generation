@@ -12,7 +12,7 @@ for M in 1000000 10000000 50000000 80000000; do
   for sched_type in "STATIC" "DYNAMIC" "GUIDED" "AUTO"; do
     for chunk in 1 10 100; do
       if [[ $sched_type != "AUTO" ]] || [[ $chunk -eq 1 ]]; then
-        declare -A exec_times
+        exec_times=()
         for t in 1 2 4; do
           exec_time="$(grep -oP "Execution time:\s+\K\d+" <<<"$(./prime $sched_type $chunk $M $t)")"
           exec_times[$t]=${exec_time}
