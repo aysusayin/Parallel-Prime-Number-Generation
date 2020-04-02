@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-echo "Must have 4 CPUs at least"
+echo "WARNING:Must have 4 CPUs at least"
 
-cmake ../Parallel-Processing/
-make
+g++ --openmp -o prime main.cpp
+
+echo "Program compiled"
 
 lines=('M,OpenMp Loop Scheduling Method,Chunk Size,T1,T2,T4,S2,S4')
 
