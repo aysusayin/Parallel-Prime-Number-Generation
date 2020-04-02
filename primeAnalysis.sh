@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-cpu_num=$(nproc --all)
-if [[ cpu_num -lt 4 ]]; then
-  echo "Must have 4 CPUs at least"
-  exit 0
-fi
+echo "Must have 4 CPUs at least"
 
 cmake ../Parallel-Processing/
 make
