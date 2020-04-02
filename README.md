@@ -27,7 +27,7 @@ To see the analysis, run `./primeAnalysis.sh`. You can run this file without mak
  NOTE: "primeAnalysis.sh" program generates a file named "PrimeNumberGeneratorAnalysis.csv". So
  please be careful if you have a file with the same name since the program overwrites it.
  
-There is a example csv file that contains the results generated on my computer called "ExampleAnalysis.csv".
+There is an example csv file that contains the results generated on my computer called "ExampleAnalysis.csv".
 
 My CPU information:
 ```
