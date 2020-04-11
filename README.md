@@ -1,6 +1,7 @@
 # Parallel-Processing
 ## CMPE 478: Parallel Processing HW 1
 ### Generating Prime Numbers
+We needed to parallelized given prime number generator algotihm using OpenMP.
 
 #### Prime Number Generator
 To generate prime numbers first make the project by running following commands: 
